@@ -806,8 +806,8 @@
     initMap();
 
     window.Motion.strip([
-      'Pizza z pieca', 'Soczyste burgery', 'Domowe gnocchi', 'Pad Thai',
-      'Golonka w piwie i BBQ', 'Desery z kuchni', 'Czynne do północy'
+      'Pizza z pieca', 'Soczyste burgery', 'Placek po zbójnicku', 'Pad Thai',
+      'Rollo i sałatki', 'Żurek w chlebie', 'Czynne do północy'
     ]);
 
     window.Motion.splitAll();

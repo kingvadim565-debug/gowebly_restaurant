@@ -7,3 +7,6 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 *.tmp
+
+# sekrety — nigdy do repozytorium
+.env

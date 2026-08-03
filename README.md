@@ -1,100 +1,154 @@
-# Miasto 88 — strona z panelem administracyjnym
+# Miasto 88 — strona restauracji z panelem i rezerwacjami
 
-Aplikacja webowa dla restauracji: strona publiczna + panel do zarządzania treścią
-i rezerwacjami. Napisana w Node.js **bez żadnych bibliotek zewnętrznych** —
-nie ma `npm install`, nie ma czego zepsuć przy aktualizacjach.
+Aplikacja webowa: strona publiczna + panel administracyjny + rezerwacje online.
+Dane trzymane w **MongoDB Atlas**, więc projekt działa zarówno lokalnie, jak i na
+**Vercelu** jako funkcja serverless — pod adresem `restaurant.gowebly.pl`.
 
 ---
 
-## Uruchomienie
+## Szybki start (lokalnie)
 
-Potrzebny jest **Node.js** (wersja LTS) z [nodejs.org](https://nodejs.org) — instalacja jednorazowa.
-Projekt **nie ma żadnych zależności**, więc `npm install` nie jest potrzebne.
+1. Zainstaluj **Node.js** LTS z [nodejs.org](https://nodejs.org).
+2. Skopiuj `.env.example` do `.env` i uzupełnij dwie wartości:
 
 ```bash
+cp .env.example .env
+```
+
+| Zmienna | Skąd wziąć |
+|---|---|
+| `MONGO_URL` | MongoDB Atlas → Database → **Connect** → Drivers → Node.js |
+| `MONGO_DB` | zostaw `miasto88` — osobna baza, nie miesza się z danymi GoWebly |
+| `SESSION_SECRET` | wygeneruj: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+
+3. Uruchom:
+
+```bash
+npm install
 npm run dev
 ```
 
-Alternatywnie: dwuklik na **`start.bat`** — robi to samo i sam otwiera przeglądarkę.
-
-| Adres | Co to jest |
+| Adres | Co to |
 |---|---|
 | `http://localhost:3000/` | strona dla gości |
 | `http://localhost:3000/admin` | panel administracyjny |
 
-**Pierwsze logowanie:** login `admin`, hasło `miasto88`.
-Zmień je od razu w panelu → zakładka **Konto**. Do czasu zmiany panel wyświetla ostrzeżenie.
+**Pierwsze logowanie:** `admin` / `miasto88` — zmień w panelu, zakładka **Konto**.
+Przy pustej bazie aplikacja sama wgrywa menu (102 pozycje), zdjęcia i konto administratora.
 
-Zatrzymanie serwera: `Ctrl + C` w oknie terminala.
+Alternatywnie: dwuklik na `start.bat` — sprawdzi Node, zależności i odpali serwer.
 
-### Dostępne komendy
+### Komendy
 
 | Komenda | Do czego |
 |---|---|
-| `npm run dev` | tryb pracy — serwer restartuje się sam po zmianie `server.js` |
-| `npm start` | tryb produkcyjny — bez auto-restartu |
-| `npm run reset-haslo -- NoweHaslo123` | awaryjna zmiana hasła administratora (min. 8 znaków) |
+| `npm run dev` | tryb pracy — restart po zmianie kodu serwera |
+| `npm start` | tryb produkcyjny |
+| `npm run reset-haslo -- NoweHaslo123` | awaryjna zmiana hasła administratora |
+| `npm run migruj` | przeniesienie danych ze starej wersji (`data/db.json`) do Atlasa |
 
-Auto-restart w `npm run dev` reaguje tylko na zmiany w kodzie serwera. Zapis rezerwacji
-do bazy **nie** restartuje serwera, więc nikt nie zostaje wylogowany w trakcie pracy.
-Zmiany w `public/` (HTML, CSS, JS strony) działają od razu po odświeżeniu przeglądarki.
+---
 
-Gdyby port 3000 był zajęty:
+## Wdrożenie na Vercel (restaurant.gowebly.pl)
 
-```bash
-set PORT=3001 && npm run dev
+Projekt jest już przygotowany — `vercel.json` i katalog `api/` są w repozytorium.
+
+1. **Vercel → Add New Project** → zaimportuj repozytorium `gowebly_restaurant`.
+2. Framework Preset: **Other**. Build Command i Output Directory zostaw puste —
+   `public/` serwowane jest statycznie, a `api/index.js` działa jako funkcja.
+3. **Settings → Environment Variables** — dodaj trzy pozycje dla środowiska *Production*:
+
+   | Nazwa | Wartość |
+   |---|---|
+   | `MONGO_URL` | ten sam adres Atlasa co w GoWebly |
+   | `MONGO_DB` | `miasto88` |
+   | `SESSION_SECRET` | losowy ciąg, min. 32 znaki (inny niż lokalny) |
+
+4. **Settings → Domains** → dodaj `restaurant.gowebly.pl`.
+   Subdomena już wskazuje na Vercela, więc wystarczy przepiąć ją do tego projektu.
+5. Deploy.
+
+> **Atlas — Network Access:** dodaj `0.0.0.0/0` na liście dozwolonych adresów IP.
+> Funkcje Vercela nie mają stałego IP i bez tego połączenie się nie nawiąże.
+
+Po wdrożeniu sprawdź `https://restaurant.gowebly.pl/api/content` — powinno zwrócić JSON z menu.
+
+---
+
+## Dlaczego akurat tak
+
+Pierwsza wersja trzymała dane w pliku `data/db.json` i zapisywała zdjęcia na dysk.
+Na Vercelu to nie zadziała: system plików jest tylko do odczytu i znika po każdym
+wywołaniu funkcji. Trzy rzeczy musiały się zmienić:
+
+| Było | Jest | Dlaczego |
+|---|---|---|
+| plik `data/db.json` | kolekcje w MongoDB Atlas | funkcja serverless nie ma trwałego dysku |
+| sesje w pamięci procesu | ciasteczko podpisane HMAC-SHA256 | każde żądanie może trafić do innej instancji |
+| zdjęcia w `data/uploads/` | binarnie w kolekcji `images`, serwowane przez `/uploads/…` | jw. — brak dysku do zapisu |
+| limit prób logowania w pamięci | kolekcja `login_attempts` z TTL | licznik musi być wspólny dla wszystkich instancji |
+
+Kod jest wspólny dla obu środowisk: `lib/api.js` zawiera wszystkie trasy, a wywołują go
+dwa cienkie wejścia — `server.js` (lokalnie, dokłada serwowanie plików z `public/`)
+i `api/index.js` (Vercel).
+
+### Struktura
+
 ```
+├─ server.js              wejście lokalne: pliki statyczne + API
+├─ api/index.js           wejście Vercela (serverless)
+├─ vercel.json            przekierowania /api i /uploads do funkcji
+├─ migrate-to-mongo.js    przeniesienie danych ze starej wersji
+├─ lib/
+│   ├─ api.js             wszystkie trasy API
+│   ├─ store.js           dostęp do MongoDB (połączenie cache'owane)
+│   ├─ booking.js         godziny otwarcia i dostępność stolików
+│   ├─ auth.js            sesje na podpisanym ciasteczku
+│   ├─ seed.js            dane startowe: menu, zdjęcia, konto admin
+│   ├─ util.js            hasła, czas, walidacja pól
+│   └─ env.js             wczytanie .env bez bibliotek
+└─ public/                strona, panel, zdjęcia startowe
+```
+
+Jedyna zależność zewnętrzna to oficjalny sterownik `mongodb`.
 
 ---
 
 ## Co potrafi panel
 
-**Rezerwacje** — wszystkie zgłoszenia ze strony trafiają tutaj. Filtrowanie po statusie,
-wyszukiwarka po nazwisku/telefonie, zmiana statusu (nowa → potwierdzona → zrealizowana /
-odwołana), edycja szczegółów, ręczne dodawanie rezerwacji telefonicznych, usuwanie.
-Lista odświeża się sama co minutę.
+**Rezerwacje** — wszystkie zgłoszenia ze strony. Filtry, wyszukiwarka, zmiana statusu
+(nowa → potwierdzona → zrealizowana / odwołana), edycja, ręczne dodawanie telefonicznych.
 
-**Menu** — pełna edycja karty: kategorie i dania, ceny, opisy, etykiety („nowość", „hit", „wege"),
-kolejność, chwilowe ukrywanie dania bez usuwania. Zmiany widać na stronie po odświeżeniu.
-
+**Menu** — kategorie i dania, ceny, opisy, etykiety, kolejność, ukrywanie bez usuwania.
 Kategoria może mieć **kilka kolumn cenowych** — tak działa pizza (30 / 40 / 50 cm).
-W edycji kategorii wpisujesz je po przecinku w polu „Kolumny cenowe", a przy każdym daniu
-pojawią się osobne pola cen dla każdego rozmiaru. Puste pole = danie niedostępne w tym
-rozmiarze (na stronie pokaże się „—", jak przy pizzy Stella i Calzone).
-Zostaw pole kolumn puste, jeśli dania mają jedną cenę.
+W edycji kategorii wpisujesz je po przecinku w polu „Kolumny cenowe"; przy każdym daniu
+pojawiają się wtedy osobne pola cen. Puste pole = danie niedostępne w tym rozmiarze
+(na stronie „—", jak przy pizzy Stella i Calzone).
 
-**Galeria** — przeciągnij zdjęcia na pole uploadu. Każdemu zdjęciu przypisujesz **miejsce
-na stronie**: zdjęcie główne (hero), dwa zdjęcia w sekcji „O nas", zdjęcie dania
-sztandarowego, albo galeria. Dopóki nie wgrasz zdjęć, strona pokazuje ciepłe gradienty
-zamiast pustych ramek.
+**Galeria** — przeciągnij zdjęcia na pole uploadu, przypisz **miejsce na stronie**
+(zdjęcie główne, dwa w „O nas", danie sztandarowe, galeria). Pliki lądują w bazie.
 
-**Godziny otwarcia** — osobno na każdy dzień, z możliwością zaznaczenia dnia zamkniętego.
-Te godziny sterują jednocześnie trzema rzeczami: tabelą na stronie, plakietką
-„Otwarte / Zamknięte" na górnym pasku i tym, jakie terminy da się zarezerwować.
+**Godziny otwarcia** — sterują tabelą na stronie, plakietką „Otwarte / Zamknięte"
+i tym, jakie terminy da się zarezerwować.
 
-**Ustawienia** — dane kontaktowe, wszystkie teksty na stronie (nagłówki, opisy),
-liczby (ocena, opinie, obserwujący) oraz parametry systemu rezerwacji.
-
-**Konto** — zmiana hasła, pobranie treści strony w formacie JSON.
+**Ustawienia** — dane kontaktowe, teksty, liczby, parametry systemu rezerwacji.
 
 ---
 
 ## Jak działa system rezerwacji
 
-Gość wybiera datę i liczbę osób, a strona pyta serwer o wolne godziny. Serwer:
+Gość wybiera datę i liczbę osób, a serwer:
 
-1. bierze godziny otwarcia na ten dzień i generuje terminy co 30 minut,
-2. dla każdego terminu liczy, ilu gości ma już rezerwacje w nakładającym się oknie czasowym,
-3. odejmuje to od liczby miejsc na sali i zwraca liczbę wolnych miejsc.
+1. z godzin otwarcia generuje terminy co 30 minut,
+2. dla każdego liczy, ilu gości ma rezerwacje w nakładającym się oknie czasowym,
+3. odejmuje to od liczby miejsc i zwraca liczbę wolnych.
 
-Godziny bez miejsc są wyszarzone i nieklikalne. Po wysłaniu formularza serwer **jeszcze raz**
-sprawdza dostępność — dzięki temu dwie osoby rezerwujące w tej samej sekundzie nie przepełnią sali.
-
-Parametry do ustawienia w panelu (zakładka Ustawienia → System rezerwacji):
+Godziny bez miejsc są wyszarzone. Po wysłaniu formularza serwer sprawdza dostępność
+**drugi raz** — dwie osoby rezerwujące w tej samej sekundzie nie przepełnią sali.
 
 | Ustawienie | Znaczenie | Domyślnie |
 |---|---|---|
-| Liczba miejsc na sali | ile osób może być naraz | 40 |
+| Liczba miejsc na sali | ile osób naraz | 40 |
 | Czas jednej wizyty | na ile blokowany jest stolik | 90 min |
 | Maks. osób na rezerwację | powyżej — prośba o telefon | 12 |
 | Min. wyprzedzenie | najbliższy możliwy termin | 60 min |
@@ -102,119 +156,42 @@ Parametry do ustawienia w panelu (zakładka Ustawienia → System rezerwacji):
 
 ---
 
-## Struktura plików
+## Kopia zapasowa
 
-```
-restauracja/
-├─ package.json           komendy npm (dev / start / reset-haslo)
-├─ server.js              serwer + API + baza (jeden plik, bez zależności)
-├─ start.bat              uruchomienie jednym kliknięciem
-├─ data/                  tworzy się samo przy pierwszym starcie
-│   ├─ db.json            ← CAŁA TREŚĆ I REZERWACJE. To kopiuj na backup.
-│   └─ uploads/           wgrane zdjęcia
-└─ public/
-    ├─ index.html         strona publiczna
-    ├─ css/style.css
-    ├─ img/               zdjęcia startowe (do podmiany na własne)
-    ├─ js/app.js          treść z API, menu, galeria, rezerwacje
-    ├─ js/motion.js       silnik animacji
-    └─ admin/             panel administracyjny
+Wszystko leży w bazie `miasto88` w Atlasie. Kopię zrobisz przez
+**Atlas → Database → ⋯ → Export Collection**, albo lokalnie:
+
+```bash
+mongodump --uri="TWOJ_MONGO_URL" --db=miasto88 --out=./backup
 ```
 
-**Kopia zapasowa = skopiowanie folderu `data/`.** Nic więcej nie trzeba archiwizować.
+Atlas w darmowym planie robi też własne migawki — sprawdź w zakładce **Backup**.
 
 ---
+
+## Zdjęcia — do podmiany
+
+Strona ma **zdjęcia startowe** z Unsplash (licencja darmowa, także komercyjnie).
+Leżą w `public/img/`. To nie są Wasze dania ani Wasza sala — podmień je:
+panel → **Galeria** → przeciągnij własne, wybierz miejsce na stronie, usuń stare.
 
 ## Logo
 
-Znak to sylwetka miasteczka z wieżą pośrodku — „Miasto" w nazwie. Wcześniej w tym miejscu
-była po prostu liczba 88, która i tak powtarzała się w napisie obok.
-
 | Plik | Do czego |
 |---|---|
-| `public/img/logo.svg` | sam znak w czerwonym kwadracie — favicon, ikona aplikacji, awatar na Facebooku |
-| `public/img/logo-lockup.svg` | znak + nazwa + „RESTAURACJA · MOGILNO" — wizytówki, ulotki, stopki maili |
+| `public/img/logo.svg` | znak — favicon, ikona, awatar na Facebooku |
+| `public/img/logo-lockup.svg` | znak + nazwa — wizytówki, ulotki, stopka maila |
 
-Znak jest jednokolorowy, więc przyjmuje kolor tła: na stronie jest kremowy na czerwonym,
-w stopce czerwony na kremowym, w panelu złoty na ciemnym. Sprawdzony pod kątem czytelności
-od 16 px (favicon) w górę — dlatego nie ma w nim drobnych detali typu okna, które przy
-tym rozmiarze zamieniają się w plamę.
-
-Pliki SVG otworzysz i wyeksportujesz do PNG w darmowej Inkscape albo na stronie
-[svgtopng.com](https://svgtopng.com) — przyda się, bo Facebook i Google wymagają PNG/JPG.
+Sylwetka miasteczka z wieżą, czytelna od 16 px. Jednokolorowa, więc przyjmuje kolor tła.
 
 ---
 
-## Zdjęcia — WAŻNE
+## Do sprawdzenia przed publikacją
 
-Strona ma **zdjęcia startowe** z serwisu Unsplash (licencja darmowa, także do celów
-komercyjnych, bez obowiązku podawania autora). Leżą w `public/img/` i są przypisane
-do miejsc na stronie w panelu → Galeria.
-
-**To są zdjęcia zastępcze — nie Wasze dania.** Trzeba je podmienić na własne:
-
-1. Panel → **Galeria** → przeciągnij swoje zdjęcia na pole uploadu.
-2. Przy każdym nowym zdjęciu wybierz **miejsce na stronie**
-   (zdjęcie główne / O nas — duże / O nas — małe / danie sztandarowe / galeria).
-3. Usuń stare zdjęcia zastępcze przyciskiem „Usuń zdjęcie".
-
-Dopóki tego nie zrobisz, goście zobaczą ogólne zdjęcia jedzenia. Google potrafi
-rozpoznać stockowe fotografie, a lokalni goście i tak zauważą, że to nie Wasza sala —
-własne zdjęcia zawsze sprzedają lepiej.
-
----
-
-## Animacje i wygląd
-
-Kierunek: **ciepłe bistro** — kremowe tło (#FDF8F2), pomidorowa czerwień jako akcent,
-zdjęcia jedzenia na pierwszym planie, miękkie zaokrąglenia i delikatne cienie.
-Kroje pisma: **Fraunces** (nagłówki, ciepły szeryf) + **DM Sans** (tekst).
-
-- ekran powitalny z paskiem ładowania,
-- nagłówki wjeżdżające słowo po słowie,
-- paralaksa na zdjęciach,
-- przyciski przyciągające kursor (tylko na komputerach z myszką),
-- animowane liczniki (ocena, liczba opinii, obserwujący),
-- przewijany pasek z hasłami kuchni,
-- przełączanie kategorii menu z animowaną pigułką,
-- galeria z lightboxem (strzałki, Escape, podpisy),
-- rysowany znaczek potwierdzenia po rezerwacji.
-
-Wszystko wyłącza się automatycznie, gdy w systemie włączona jest opcja
-**„ogranicz ruch"** (dostępność) — wtedy zostaje sama, statyczna treść.
-
----
-
-## Publikacja w internecie
-
-Na razie strona działa tylko na tym komputerze (`localhost`). Żeby wystawić ją publicznie
-pod adresem typu `miasto88.pl`, potrzebny jest hosting obsługujący **Node.js** —
-np. [Railway](https://railway.app), [Render](https://render.com) albo VPS (mikr.us, OVH).
-Wgrywasz cały folder, ustawiasz komendę startową **`npm start`** i podpinasz domenę.
-Hosting sam poda numer portu przez zmienną `PORT` — serwer to obsługuje.
-
-Zwykły hosting „na FTP" (home.pl, cyber_Folks w podstawowym pakiecie) **nie wystarczy** —
-tam działają tylko pliki statyczne, bez panelu i rezerwacji.
-
-Przed publikacją koniecznie:
-1. zmień hasło administratora,
-2. ustaw hosting na HTTPS (ciasteczko sesji jest wtedy bezpieczne),
-3. skonfiguruj automatyczny backup pliku `data/db.json`.
-
----
-
-## Do uzupełnienia własnymi danymi
-
-Karta menu jest **prawdziwa** — 102 pozycje w 14 kategoriach, przepisane z Waszych
-zdjęć menu (pizza w trzech rozmiarach, burgery, rollo, dania główne, sałatki, napoje).
-Warto ją przejrzeć w panelu i sprawdzić, czy nic się nie przekręciło przy przepisywaniu.
-
-Do uzupełnienia zostaje:
-
-- **zdjęcia** — obecne są stockowe, patrz sekcja „Zdjęcia" wyżej,
-- **danie sztandarowe** na stronie głównej ustawiłem na „Placek po zbójnicku"
-  (golonka z Facebooka nie występuje w karcie) — zmień w Ustawieniach, jeśli wolisz inne,
-- **godziny otwarcia** — wpisane 11:00–00:00 dla każdego dnia (znana była tylko godzina
-  zamknięcia); popraw w zakładce Godziny otwarcia,
-- **link do Facebooka** — na razie prowadzi do wyszukiwarki FB; wklej właściwy adres
-  w Ustawieniach.
+- **Karta menu** — 102 pozycje przepisane z Waszych zdjęć menu; przejrzyj ceny w panelu.
+- **Godziny otwarcia** — wpisane 11:00–00:00 dla każdego dnia (z materiałów znana była
+  tylko godzina zamknięcia).
+- **Link do Facebooka** — prowadzi do wyszukiwarki FB; wklej właściwy adres w Ustawieniach.
+- **Danie sztandarowe** — ustawione na „Placek po zbójnicku" (golonka z Facebooka nie
+  występuje w karcie); zmień w Ustawieniach, jeśli wolisz inne.
+- **Hasło administratora** — zmień domyślne `miasto88`.

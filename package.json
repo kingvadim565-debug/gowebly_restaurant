@@ -1,14 +1,18 @@
 {
   "name": "miasto88",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Strona internetowa restauracji Miasto 88 w Mogilnie — serwis publiczny, panel administracyjny i system rezerwacji.",
+  "description": "Strona restauracji Miasto 88 w Mogilnie — serwis publiczny, panel administracyjny i rezerwacje online. Baza: MongoDB Atlas.",
   "type": "commonjs",
   "main": "server.js",
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "reset-haslo": "node server.js --reset-haslo"
+    "reset-haslo": "node server.js --reset-haslo",
+    "migruj": "node migrate-to-mongo.js"
+  },
+  "dependencies": {
+    "mongodb": "^6.10.0"
   },
   "engines": {
     "node": ">=18.0.0"
