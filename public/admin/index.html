@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel — Miasto 88</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/img/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+
+<!-- ══════════ LOGOWANIE ══════════ -->
+<div class="login" id="loginView" hidden>
+  <form class="login__card" id="loginForm">
+    <div class="login__mark">
+      <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+        <path d="M12 43V32l5.5-6 5.5 6v11Z"/><path d="M26 43V27l6-9 6 9v16Z"/>
+        <path d="M41 43V34l5.5-6 5.5 6v9Z"/><rect x="8" y="43" width="48" height="4" rx="2"/>
+      </svg>
+    </div>
+    <h1>Panel administracyjny</h1>
+    <p class="login__sub">Miasto 88 · Mogilno</p>
+    <label for="l-user">Login</label>
+    <input id="l-user" name="username" autocomplete="username" value="admin" required>
+    <label for="l-pass">Hasło</label>
+    <input id="l-pass" name="password" type="password" autocomplete="current-password" required>
+    <p class="msg msg--bad" id="loginErr" hidden></p>
+    <button class="btn btn--gold btn--block" type="submit" id="loginBtn">Zaloguj się</button>
+    <a class="login__back" href="/">← wróć na stronę</a>
+  </form>
+</div>
+
+<!-- ══════════ PANEL ══════════ -->
+<div class="app" id="appView" hidden>
+
+  <aside class="side" id="side">
+    <div class="side__brand">
+      <span>
+        <svg viewBox="0 0 64 64" fill="currentColor" aria-hidden="true">
+          <path d="M12 43V32l5.5-6 5.5 6v11Z"/><path d="M26 43V27l6-9 6 9v16Z"/>
+          <path d="M41 43V34l5.5-6 5.5 6v9Z"/><rect x="8" y="43" width="48" height="4" rx="2"/>
+        </svg>
+      </span>
+      <div><strong>Miasto 88</strong><small>panel</small></div>
+    </div>
+    <nav class="side__nav">
+      <button class="snav is-active" data-view="pulpit">Pulpit</button>
+      <button class="snav" data-view="rezerwacje">Rezerwacje <b class="badge" id="navNew" hidden>0</b></button>
+      <button class="snav" data-view="menu">Menu</button>
+      <button class="snav" data-view="galeria">Galeria</button>
+      <button class="snav" data-view="godziny">Godziny otwarcia</button>
+      <button class="snav" data-view="ustawienia">Ustawienia</button>
+      <button class="snav" data-view="konto">Konto</button>
+    </nav>
+    <div class="side__foot">
+      <a href="/" target="_blank" rel="noopener">Zobacz stronę ↗</a>
+      <button id="logoutBtn">Wyloguj</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <button class="top__burger" id="sideToggle" aria-label="Menu">☰</button>
+      <h1 id="viewTitle">Pulpit</h1>
+      <span class="top__save" id="saveFlag" hidden>zapisano ✓</span>
+    </header>
+
+    <div class="banner banner--warn" id="passWarn" hidden>
+      Używasz domyślnego hasła <b>miasto88</b>. Zmień je w zakładce <b>Konto</b>.
+    </div>
+
+    <!-- ─── PULPIT ─── -->
+    <section class="view is-active" data-view="pulpit">
+      <div class="cards" id="statCards"></div>
+      <div class="panel">
+        <div class="panel__head"><h2>Dzisiejsze rezerwacje</h2></div>
+        <div id="todayList"></div>
+      </div>
+    </section>
+
+    <!-- ─── REZERWACJE ─── -->
+    <section class="view" data-view="rezerwacje">
+      <div class="toolbar">
+        <div class="chips" id="resFilters">
+          <button class="chip is-active" data-status="all">Wszystkie</button>
+          <button class="chip" data-status="new">Nowe</button>
+          <button class="chip" data-status="confirmed">Potwierdzone</button>
+          <button class="chip" data-status="done">Zrealizowane</button>
+          <button class="chip" data-status="cancelled">Odwołane</button>
+        </div>
+        <input class="search" id="resSearch" type="search" placeholder="Szukaj: imię, telefon, uwagi…">
+        <button class="btn btn--gold" id="addResBtn">+ Dodaj rezerwację</button>
+      </div>
+      <div class="panel"><div id="resList"></div></div>
+    </section>
+
+    <!-- ─── MENU ─── -->
+    <section class="view" data-view="menu">
+      <div class="toolbar">
+        <button class="btn btn--gold" id="addDishBtn">+ Nowe danie</button>
+        <button class="btn btn--line" id="addCatBtn">+ Nowa kategoria</button>
+      </div>
+      <div id="menuAdmin"></div>
+    </section>
+
+    <!-- ─── GALERIA ─── -->
+    <section class="view" data-view="galeria">
+      <div class="panel">
+        <div class="panel__head"><h2>Dodaj zdjęcia</h2></div>
+        <div class="upload" id="dropZone">
+          <input type="file" id="fileInput" accept="image/*" multiple hidden>
+          <p><b>Przeciągnij zdjęcia tutaj</b> albo <button class="linkbtn" id="pickBtn" type="button">wybierz z dysku</button></p>
+          <small>JPG, PNG lub WEBP. Maksymalnie 6 MB na zdjęcie.</small>
+          <div class="upload__bar" id="upBar" hidden><i></i></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel__head">
+          <h2>Zdjęcia</h2>
+          <p class="panel__hint">„Miejsce na stronie" decyduje, gdzie zdjęcie się pojawi. Puste = galeria.</p>
+        </div>
+        <div class="grid-img" id="galleryAdmin"></div>
+      </div>
+    </section>
+
+    <!-- ─── GODZINY ─── -->
+    <section class="view" data-view="godziny">
+      <div class="panel">
+        <div class="panel__head">
+          <h2>Godziny otwarcia</h2>
+          <p class="panel__hint">Wpisz 24:00, jeśli zamykacie o północy. Godziny sterują też rezerwacjami online.</p>
+        </div>
+        <div id="hoursAdmin"></div>
+        <div class="panel__foot"><button class="btn btn--gold" id="saveHours">Zapisz godziny</button></div>
+      </div>
+    </section>
+
+    <!-- ─── USTAWIENIA ─── -->
+    <section class="view" data-view="ustawienia">
+      <form id="settingsForm">
+        <div class="panel">
+          <div class="panel__head"><h2>Dane kontaktowe</h2></div>
+          <div class="fgrid">
+            <label>Nazwa lokalu<input name="name"></label>
+            <label>Podtytuł<input name="tagline"></label>
+            <label>Telefon (wyświetlany)<input name="phone"></label>
+            <label>Telefon (do dzwonienia)<input name="phoneRaw" placeholder="+48514318457"></label>
+            <label>Ulica<input name="street"></label>
+            <label>Kod i miasto<input name="city"></label>
+            <label>Adres Facebooka<input name="facebook"></label>
+            <label>Fraza dla map Google<input name="mapsQuery"></label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h2>Teksty na stronie</h2></div>
+          <div class="fgrid">
+            <label>Nadtytuł w hero<input name="heroKicker"></label>
+            <label>Tytuł hero — 1. linia<input name="heroTitle"></label>
+            <label>Tytuł hero — 2. linia (złota)<input name="heroTitleAccent"></label>
+            <label class="wide">Opis w hero<textarea name="heroLead" rows="2"></textarea></label>
+            <label>Nagłówek „O nas"<input name="aboutTitle"></label>
+            <label>Nagłówek dania sztandarowego<input name="featureTitle"></label>
+            <label class="wide">Tekst „O nas" (Enter = nowy akapit)<textarea name="aboutText" rows="5"></textarea></label>
+            <label class="wide">Opis dania sztandarowego<textarea name="featureText" rows="3"></textarea></label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h2>Liczby i social proof</h2></div>
+          <div class="fgrid">
+            <label>Ocena w Google<input name="rating" type="number" step="0.1" min="0" max="5"></label>
+            <label>Liczba opinii<input name="reviewsCount" type="number" min="0"></label>
+            <label>Obserwujący na FB<input name="followers" type="number" min="0"></label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head">
+            <h2>System rezerwacji</h2>
+            <p class="panel__hint">Te ustawienia decydują, ile rezerwacji przyjmie strona.</p>
+          </div>
+          <div class="fgrid">
+            <label>Liczba miejsc na sali<input name="seats" type="number" min="1"></label>
+            <label>Czas jednej wizyty (min)<input name="slotMinutes" type="number" min="30" step="15"></label>
+            <label>Maks. osób na rezerwację<input name="maxPeoplePerBooking" type="number" min="1"></label>
+            <label>Rezerwacja min. z wyprzedzeniem (min)<input name="leadMinutes" type="number" min="0"></label>
+            <label>Rezerwacje maks. na ile dni naprzód<input name="maxDaysAhead" type="number" min="1"></label>
+          </div>
+        </div>
+
+        <div class="sticky-save"><button class="btn btn--gold" type="submit">Zapisz ustawienia</button></div>
+      </form>
+    </section>
+
+    <!-- ─── KONTO ─── -->
+    <section class="view" data-view="konto">
+      <div class="panel panel--narrow">
+        <div class="panel__head"><h2>Zmiana hasła</h2></div>
+        <form id="passForm" class="fgrid fgrid--1">
+          <label>Obecne hasło<input name="current" type="password" autocomplete="current-password" required></label>
+          <label>Nowe hasło (min. 8 znaków)<input name="next" type="password" autocomplete="new-password" required></label>
+          <label>Powtórz nowe hasło<input name="repeat" type="password" autocomplete="new-password" required></label>
+          <p class="msg" id="passMsg" hidden></p>
+          <button class="btn btn--gold" type="submit">Zmień hasło</button>
+        </form>
+      </div>
+      <div class="panel panel--narrow">
+        <div class="panel__head"><h2>Kopia zapasowa</h2>
+          <p class="panel__hint">Cała treść strony i rezerwacje leżą w pliku <code>data/db.json</code>. Warto go czasem skopiować.</p>
+        </div>
+        <div class="panel__foot"><a class="btn btn--line" href="/api/content" download="miasto88-tresc.json">Pobierz treść strony (JSON)</a></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ══════════ OKNO MODALNE ══════════ -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__box" role="dialog" aria-modal="true">
+    <div class="modal__head"><h3 id="modalTitle">—</h3><button id="modalClose" aria-label="Zamknij">×</button></div>
+    <div class="modal__body" id="modalBody"></div>
+    <div class="modal__foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="/admin/admin.js" defer></script>
+</body>
+</html>

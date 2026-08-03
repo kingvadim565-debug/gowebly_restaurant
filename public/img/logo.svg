@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Miasto 88">
+  <title>Miasto 88</title>
+  <rect width="64" height="64" rx="16" fill="#D2402A"/>
+  <g fill="#FDF8F2">
+    <path d="M12 43V32l5.5-6 5.5 6v11Z"/>
+    <path d="M26 43V27l6-9 6 9v16Z"/>
+    <path d="M41 43V34l5.5-6 5.5 6v9Z"/>
+    <rect x="8" y="43" width="48" height="4" rx="2"/>
+  </g>
+</svg>

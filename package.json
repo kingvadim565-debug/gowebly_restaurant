@@ -1,0 +1,17 @@
+{
+  "name": "miasto88",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Strona internetowa restauracji Miasto 88 w Mogilnie — serwis publiczny, panel administracyjny i system rezerwacji.",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "reset-haslo": "node server.js --reset-haslo"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "UNLICENSED"
+}

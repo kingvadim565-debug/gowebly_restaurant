@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miasto 88 — Restauracja w Mogilnie</title>
+<meta name="description" content="Miasto 88 — restauracja w Mogilnie. Pizza z pieca, burgery, gnocchi, pad thai i golonka zapiekana w piwie i BBQ. Zarezerwuj stolik online.">
+<meta name="theme-color" content="#FDF8F2">
+<meta property="og:type" content="restaurant">
+<meta property="og:locale" content="pl_PL">
+<meta property="og:title" content="Miasto 88 — Restauracja w Mogilnie">
+<meta property="og:description" content="Pizza, burgery, gnocchi, pad thai i golonka w piwie z BBQ. Rezerwacja stolika online.">
+<meta property="og:image" content="/img/hero.jpg">
+
+<link rel="icon" href="/img/logo.svg">
+<link rel="apple-touch-icon" href="/img/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Przejdź do treści</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <!-- znak wpisany wprost: ekran powitalny pokazuje się, zanim doczyta się zestaw ikon na dole strony -->
+  <div class="loader__mark">
+    <svg viewBox="0 0 64 64" fill="currentColor">
+      <path d="M12 43V32l5.5-6 5.5 6v11Z"/><path d="M26 43V27l6-9 6 9v16Z"/>
+      <path d="M41 43V34l5.5-6 5.5 6v9Z"/><rect x="8" y="43" width="48" height="4" rx="2"/>
+    </svg>
+  </div>
+  <div class="loader__bar"><i></i></div>
+</div>
+
+<!-- ══════════ PASEK GÓRNY ══════════ -->
+<div class="topbar">
+  <div class="wrap topbar__in">
+    <span class="topbar__i" data-bind="addressShort">—</span>
+    <span class="topbar__i status" id="statusBadge"><i class="dot"></i><span data-bind="statusText">…</span></span>
+    <a class="topbar__i topbar__tel" data-bind-href="tel" href="#">
+      <svg viewBox="0 0 24 24" class="i"><use href="#ic-phone"/></svg><span data-bind="phone">—</span>
+    </a>
+  </div>
+</div>
+
+<!-- ══════════ NAWIGACJA ══════════ -->
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top">
+      <span class="brand__mark"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ic-logo"/></svg></span>
+      <span class="brand__txt"><strong data-bind="name">Miasto 88</strong><small data-bind="tagline">Restauracja</small></span>
+    </a>
+    <nav class="nav__links" id="navLinks" aria-label="Nawigacja główna">
+      <a href="#o-nas">O nas</a>
+      <a href="#menu">Menu</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+    <div class="nav__cta">
+      <a class="btn btn--primary magnetic" href="#rezerwacja"><span>Rezerwuj stolik</span></a>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main"><span id="top"></span>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero">
+  <span class="blob blob--1" aria-hidden="true"></span>
+  <span class="blob blob--2" aria-hidden="true"></span>
+
+  <div class="wrap hero__in">
+    <div class="hero__copy">
+      <p class="pill-badge anim" data-anim="up">
+        <svg viewBox="0 0 24 24" class="i"><use href="#ic-star"/></svg>
+        <b data-bind="rating">—</b> / 5 · <span data-bind="reviewsCount">—</span> opinii w Google
+      </p>
+      <h1 class="hero__title split" id="heroTitle"></h1>
+      <p class="hero__lead anim" data-anim="up" data-delay="120" data-bind="heroLead">—</p>
+      <div class="hero__btns anim" data-anim="up" data-delay="200">
+        <a class="btn btn--primary btn--lg magnetic" href="#rezerwacja"><span>Zarezerwuj stolik</span></a>
+        <a class="btn btn--ghost btn--lg" href="#menu"><span>Zobacz menu</span>
+          <svg viewBox="0 0 24 24" class="i"><use href="#ic-arrow"/></svg>
+        </a>
+      </div>
+      <ul class="hero__meta anim" data-anim="up" data-delay="280">
+        <li><svg viewBox="0 0 24 24" class="i"><use href="#ic-clock"/></svg> Kuchnia czynna do północy</li>
+        <li><svg viewBox="0 0 24 24" class="i"><use href="#ic-pin"/></svg> <span data-bind="addressShort">—</span></li>
+      </ul>
+    </div>
+
+    <div class="hero__art">
+      <div class="hero__photo" data-parallax="-0.06"><div class="img" id="heroImg"></div></div>
+      <div class="hero__chip hero__chip--rate anim" data-anim="pop" data-delay="420">
+        <strong data-count data-bind-count="rating" data-decimals="1">0</strong>
+        <div class="stars" id="heroStars"></div>
+        <span><span data-bind="reviewsCount">0</span> opinii</span>
+      </div>
+      <div class="hero__chip hero__chip--fb anim" data-anim="pop" data-delay="540">
+        <strong data-count data-bind-count="followers" data-suffix="+">0</strong>
+        <span>obserwujących<br>na Facebooku</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PASEK HASEŁ ══════════ -->
+<div class="strip" aria-hidden="true"><div class="strip__track" id="stripTrack"></div></div>
+
+<!-- ══════════ O NAS ══════════ -->
+<section class="sec" id="o-nas">
+  <div class="wrap about">
+    <div class="about__media">
+      <div class="frame frame--tall" data-parallax="0.05"><div class="img" id="aboutImg1"></div></div>
+      <div class="frame frame--sq" data-parallax="-0.05"><div class="img" id="aboutImg2"></div></div>
+      <span class="about__dot" aria-hidden="true"></span>
+    </div>
+    <div class="about__copy">
+      <p class="kicker anim" data-anim="up"><i></i>O nas</p>
+      <h2 class="h2 split" data-bind-split="aboutTitle"></h2>
+      <div class="prose anim" data-anim="up" data-delay="100" data-bind-para="aboutText"></div>
+      <ul class="ticks anim" data-anim="up" data-delay="180">
+        <li>Kuchnia czynna do późna, również w weekendy</li>
+        <li>Przyjęcia okolicznościowe i imprezy zamknięte</li>
+        <li>Dania na wynos i menu lunchowe</li>
+        <li>Miejsce przyjazne rodzinom z dziećmi</li>
+      </ul>
+      <a class="arrow-link anim" data-anim="up" data-delay="240" href="#kontakt">Sprawdź, jak do nas trafić
+        <svg viewBox="0 0 24 24" class="i"><use href="#ic-arrow"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ DANIE SZTANDAROWE ══════════ -->
+<section class="sec sec--sand" id="nowosc">
+  <div class="wrap feat">
+    <div class="feat__copy">
+      <p class="kicker anim" data-anim="up"><i></i>Nasz znak firmowy</p>
+      <h2 class="h2 split" data-bind-split="featureTitle"></h2>
+      <p class="prose anim" data-anim="up" data-delay="100" data-bind="featureText">—</p>
+      <div class="feat__btns anim" data-anim="up" data-delay="180">
+        <a class="btn btn--primary magnetic" href="#rezerwacja"><span>Zamów przy rezerwacji</span></a>
+        <a class="btn btn--ghost" data-bind-href="tel" href="#">
+          <svg viewBox="0 0 24 24" class="i"><use href="#ic-phone"/></svg><span data-bind="phone">—</span>
+        </a>
+      </div>
+    </div>
+    <div class="feat__media">
+      <div class="frame frame--wide" data-parallax="0.06"><div class="img" id="featureImg"></div></div>
+      <span class="ribbon">Nowość w karcie</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MENU ══════════ -->
+<section class="sec" id="menu">
+  <div class="wrap">
+    <header class="sec__head">
+      <div>
+        <p class="kicker anim" data-anim="up"><i></i>Nasza karta</p>
+        <h2 class="h2 split">Menu</h2>
+      </div>
+      <p class="sec__note anim" data-anim="up" data-delay="120">
+        Od pizzy z pieca po pad thai. Kartę odświeżamy sezonowo — pytaj też o dania dnia.
+      </p>
+    </header>
+
+    <div class="tabs" id="menuTabs" role="tablist" aria-label="Kategorie menu">
+      <span class="tabs__pill" id="tabsPill" aria-hidden="true"></span>
+    </div>
+
+    <div class="menu" id="menuList" aria-live="polite"></div>
+
+    <div class="notes">
+      <p class="note anim" data-anim="up">
+        <svg viewBox="0 0 24 24" class="i"><use href="#ic-info"/></svg>
+        <span data-bind="menuNote">—</span>
+      </p>
+      <p class="note anim" data-anim="up" data-delay="80">
+        <svg viewBox="0 0 24 24" class="i"><use href="#ic-info"/></svg>
+        <span>Zielony znacznik <em class="tag" data-tag="wege">wege</em> oznacza danie wegetariańskie.
+        Masz alergię? Powiedz obsłudze — pełną listę alergenów udostępniamy na miejscu.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GALERIA ══════════ -->
+<section class="sec sec--sand" id="galeria">
+  <div class="wrap">
+    <header class="sec__head">
+      <div>
+        <p class="kicker anim" data-anim="up"><i></i>Galeria</p>
+        <h2 class="h2 split">Zajrzyj do nas</h2>
+      </div>
+      <p class="sec__note anim" data-anim="up" data-delay="120">Kliknij zdjęcie, żeby powiększyć.</p>
+    </header>
+    <div class="gal" id="gallery"></div>
+  </div>
+</section>
+
+<!-- ══════════ OPINIE ══════════ -->
+<section class="proof" id="opinie">
+  <div class="wrap proof__in">
+    <div class="proof__big anim" data-anim="up">
+      <strong data-count data-bind-count="rating" data-decimals="1">0</strong>
+      <div class="stars stars--lg" id="proofStars"></div>
+      <span>na podstawie <b data-bind="reviewsCount">0</b> opinii w Google</span>
+    </div>
+    <div class="proof__cells">
+      <div class="cell anim" data-anim="up" data-delay="80">
+        <strong data-count data-bind-count="followers" data-suffix="+">0</strong>
+        <span>obserwujących na Facebooku</span>
+      </div>
+      <div class="cell anim" data-anim="up" data-delay="160">
+        <strong>45 min – 2,5 h</strong><span>tyle zwykle trwa wizyta</span>
+      </div>
+      <div class="cell anim" data-anim="up" data-delay="240">
+        <strong>bez kolejek</strong><span>zwykle nie trzeba czekać</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ REZERWACJA ══════════ -->
+<section class="sec" id="rezerwacja">
+  <div class="wrap book">
+    <div class="book__aside">
+      <p class="kicker anim" data-anim="up"><i></i>Rezerwacja online</p>
+      <h2 class="h2 split">Zarezerwuj stolik</h2>
+      <p class="prose anim" data-anim="up" data-delay="100">
+        Wybierz termin, a system sam sprawdzi, ile miejsc zostało wolnych.
+        Potwierdzenie dostaniesz od razu na ekranie.
+      </p>
+      <a class="callcard anim" data-anim="up" data-delay="180" data-bind-href="tel" href="#">
+        <span class="callcard__ico"><svg viewBox="0 0 24 24" class="i"><use href="#ic-phone"/></svg></span>
+        <span><strong data-bind="phone">—</strong><small>Wolisz przez telefon? Dzwoń śmiało</small></span>
+      </a>
+      <ul class="ticks anim" data-anim="up" data-delay="240">
+        <li>Grupy powyżej 12 osób — prosimy o kontakt telefoniczny</li>
+        <li>Organizujemy chrzciny, komunie i imprezy firmowe</li>
+        <li>Stolik trzymamy 15 minut od zarezerwowanej godziny</li>
+      </ul>
+    </div>
+
+    <div class="card book__card anim" data-anim="up" data-delay="120">
+      <ol class="steps" id="steps">
+        <li class="is-active"><i>1</i><span>Termin</span></li>
+        <li><i>2</i><span>Godzina</span></li>
+        <li><i>3</i><span>Dane</span></li>
+      </ol>
+
+      <form id="bookForm" novalidate>
+        <div class="step is-active" data-step="1">
+          <div class="field">
+            <label for="b-date">Data wizyty</label>
+            <input id="b-date" name="date" type="date" required>
+            <p class="err" data-err="date"></p>
+          </div>
+          <div class="field">
+            <label for="b-people">Liczba osób</label>
+            <div class="counter">
+              <button type="button" class="counter__b" id="peopleMinus" aria-label="Mniej osób">−</button>
+              <input id="b-people" name="people" type="number" min="1" max="12" value="2" inputmode="numeric">
+              <button type="button" class="counter__b" id="peoplePlus" aria-label="Więcej osób">+</button>
+            </div>
+            <p class="err" data-err="people"></p>
+          </div>
+          <button class="btn btn--primary btn--block" type="button" data-next="2"><span>Sprawdź wolne godziny</span></button>
+        </div>
+
+        <div class="step" data-step="2">
+          <p class="step__hint" id="slotsHint">Wybierz godzinę:</p>
+          <div class="slots" id="slots"></div>
+          <p class="err" data-err="time"></p>
+          <div class="step__nav">
+            <button class="btn btn--ghost" type="button" data-back="1"><span>Wstecz</span></button>
+            <button class="btn btn--primary" type="button" data-next="3" id="toStep3" disabled><span>Dalej</span></button>
+          </div>
+        </div>
+
+        <div class="step" data-step="3">
+          <div class="summary" id="summary"></div>
+          <div class="field">
+            <label for="b-name">Imię i nazwisko</label>
+            <input id="b-name" name="name" type="text" autocomplete="name" required placeholder="np. Anna Kowalska">
+            <p class="err" data-err="name"></p>
+          </div>
+          <div class="field">
+            <label for="b-phone">Telefon</label>
+            <input id="b-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="np. 500 100 200">
+            <p class="err" data-err="phone"></p>
+          </div>
+          <div class="field">
+            <label for="b-note">Uwagi <span class="opt">(opcjonalnie)</span></label>
+            <textarea id="b-note" name="note" rows="2" placeholder="Stolik przy oknie, urodziny, krzesełko dla dziecka…"></textarea>
+            <p class="err" data-err="note"></p>
+          </div>
+          <div class="step__nav">
+            <button class="btn btn--ghost" type="button" data-back="2"><span>Wstecz</span></button>
+            <button class="btn btn--primary" type="submit" id="submitBtn"><span>Rezerwuję</span></button>
+          </div>
+          <p class="err err--form" data-err="_form"></p>
+        </div>
+      </form>
+
+      <div class="done" id="bookDone" hidden>
+        <svg class="done__check" viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M15 27l8 8 15-16"/></svg>
+        <h3>Stolik zarezerwowany</h3>
+        <p id="doneText"></p>
+        <button class="btn btn--ghost" type="button" id="againBtn"><span>Zarezerwuj kolejny</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ KONTAKT ══════════ -->
+<section class="sec sec--sand" id="kontakt">
+  <div class="wrap">
+    <header class="sec__head">
+      <div>
+        <p class="kicker anim" data-anim="up"><i></i>Kontakt</p>
+        <h2 class="h2 split">Gdzie i kiedy</h2>
+      </div>
+    </header>
+
+    <div class="contact">
+      <div class="contact__cards">
+        <div class="card card--pad anim" data-anim="up">
+          <h3><svg viewBox="0 0 24 24" class="i"><use href="#ic-pin"/></svg> Adres</h3>
+          <p class="addr"><strong data-bind="name">—</strong><br><span data-bind="street">—</span><br><span data-bind="city">—</span></p>
+          <a class="arrow-link" id="routeLink" href="#" target="_blank" rel="noopener">Wyznacz trasę
+            <svg viewBox="0 0 24 24" class="i"><use href="#ic-arrow"/></svg></a>
+        </div>
+        <div class="card card--pad anim" data-anim="up" data-delay="80">
+          <h3><svg viewBox="0 0 24 24" class="i"><use href="#ic-clock"/></svg> Godziny otwarcia</h3>
+          <table class="hours" id="hoursTable"></table>
+        </div>
+        <div class="card card--pad anim" data-anim="up" data-delay="160">
+          <h3><svg viewBox="0 0 24 24" class="i"><use href="#ic-phone"/></svg> Telefon</h3>
+          <a class="bigtel" data-bind-href="tel" href="#" data-bind="phone">—</a>
+          <a class="arrow-link" id="fbLink" href="#" target="_blank" rel="noopener">Facebook
+            <svg viewBox="0 0 24 24" class="i"><use href="#ic-arrow"/></svg></a>
+        </div>
+      </div>
+      <div class="contact__map anim" data-anim="up" data-delay="120"><div id="mapBox"></div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════ STOPKA ══════════ -->
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div class="foot__brand">
+      <span class="brand__mark brand__mark--light"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#ic-logo"/></svg></span>
+      <div><strong data-bind="name">—</strong><small data-bind="tagline">—</small></div>
+      <p>Pizza, burgery, makarony i klasyki polskiej kuchni. Codziennie do północy w Mogilnie.</p>
+    </div>
+    <nav class="foot__nav" aria-label="Stopka">
+      <h4>Strona</h4>
+      <a href="#o-nas">O nas</a><a href="#menu">Menu</a><a href="#galeria">Galeria</a>
+      <a href="#rezerwacja">Rezerwacja</a><a href="#kontakt">Kontakt</a>
+    </nav>
+    <div class="foot__contact">
+      <h4>Kontakt</h4>
+      <p><span data-bind="street">—</span><br><span data-bind="city">—</span></p>
+      <p><a data-bind-href="tel" href="#" data-bind="phone">—</a></p>
+      <p><a id="fbLink2" href="#" target="_blank" rel="noopener">Facebook</a></p>
+    </div>
+  </div>
+  <div class="wrap foot__bar">
+    <p>&copy; <span id="year"></span> <span data-bind="name">Miasto 88</span></p>
+    <a href="/admin">Panel</a>
+  </div>
+</footer>
+
+<!-- ══════════ PASEK MOBILNY ══════════ -->
+<div class="mbar">
+  <a class="mbar__b" data-bind-href="tel" href="#">
+    <svg viewBox="0 0 24 24" class="i"><use href="#ic-phone"/></svg> Zadzwoń
+  </a>
+  <a class="mbar__b mbar__b--main" href="#rezerwacja">Rezerwuj stolik</a>
+</div>
+
+<!-- ══════════ LIGHTBOX ══════════ -->
+<div class="lb" id="lightbox" hidden>
+  <button class="lb__x" id="lbClose" aria-label="Zamknij">×</button>
+  <button class="lb__n lb__n--p" id="lbPrev" aria-label="Poprzednie">‹</button>
+  <figure><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <button class="lb__n lb__n--x" id="lbNext" aria-label="Następne">›</button>
+</div>
+
+<!-- ══════════ IKONY ══════════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <!-- znak Miasto 88 — sylwetka miasteczka z wieżą; jednokolorowy, więc przyjmuje kolor otoczenia -->
+  <symbol id="ic-logo" viewBox="0 0 64 64">
+    <path fill="currentColor" d="M12 43V32l5.5-6 5.5 6v11Z"/>
+    <path fill="currentColor" d="M26 43V27l6-9 6 9v16Z"/>
+    <path fill="currentColor" d="M41 43V34l5.5-6 5.5 6v9Z"/>
+    <rect fill="currentColor" x="8" y="43" width="48" height="4" rx="2"/>
+  </symbol>
+  <symbol id="ic-phone" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2Z"/></symbol>
+  <symbol id="ic-pin" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="ic-clock" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="ic-star" fill="currentColor"><path d="m12 2 3 6.6 7 .9-5.1 4.8 1.3 7L12 18l-6.2 3.3 1.3-7L2 9.5l7-.9L12 2Z"/></symbol>
+  <symbol id="ic-arrow" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="ic-info" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+</svg>
+
+<script src="/js/motion.js" defer></script>
+<script src="/js/app.js" defer></script>
+</body>
+</html>

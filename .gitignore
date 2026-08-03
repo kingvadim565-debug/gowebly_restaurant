@@ -1,0 +1,9 @@
+# baza danych i zdjęcia wgrane przez panel — nie trafiają do repozytorium,
+# ale KONIECZNIE rób kopię zapasową folderu data/
+data/
+
+node_modules/
+npm-debug.log*
+.DS_Store
+Thumbs.db
+*.tmp
