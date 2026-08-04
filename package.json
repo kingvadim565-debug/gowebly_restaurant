@@ -2,7 +2,7 @@
   "name": "miasto88",
   "version": "2.0.0",
   "private": true,
-  "description": "Strona restauracji Miasto 88 w Mogilnie — serwis publiczny, panel administracyjny i rezerwacje online. Baza: MongoDB Atlas.",
+  "description": "Strona restauracji GoWebly w Mogilnie — serwis publiczny, panel administracyjny i rezerwacje online. Baza: MongoDB Atlas.",
   "type": "commonjs",
   "main": "server.js",
   "scripts": {

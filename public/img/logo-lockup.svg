@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 120" width="460" height="120" role="img" aria-label="Miasto 88 — restauracja, Mogilno">
-  <title>Miasto 88 — restauracja, Mogilno</title>
-  <rect width="460" height="120" fill="#FDF8F2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="600" height="120" role="img" aria-label="GoWebly Restauracja — Mogilno">
+  <title>GoWebly Restauracja — Mogilno</title>
+  <rect width="600" height="120" fill="#FDF8F2"/>
 
   <!-- znak -->
   <g transform="translate(20 20)">
@@ -14,6 +14,6 @@
   </g>
 
   <!-- nazwa -->
-  <text x="120" y="63" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="700" fill="#2B1D16">Miasto 88</text>
-  <text x="122" y="86" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="4.5" fill="#B0301F">RESTAURACJA &#183; MOGILNO</text>
+  <text x="120" y="62" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-weight="700" fill="#2B1D16">GoWebly Restauracja</text>
+  <text x="122" y="86" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="4.2" fill="#B0301F">MOGILNO &#183; REZERWACJE ONLINE</text>
 </svg>

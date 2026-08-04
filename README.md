@@ -1,4 +1,4 @@
-# Miasto 88 — strona restauracji z panelem i rezerwacjami
+# GoWebly Restauracja — strona restauracji z panelem i rezerwacjami
 
 Aplikacja webowa: strona publiczna + panel administracyjny + rezerwacje online.
 Dane trzymane w **MongoDB Atlas**, więc projekt działa zarówno lokalnie, jak i na

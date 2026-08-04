@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Miasto 88 — serwer lokalny (development).
+   GoWebly Restauracja — serwer lokalny (development).
    Serwuje pliki z public/ i przekazuje /api oraz /uploads
    do tego samego routera, który obsługuje produkcję na Vercelu.
 
@@ -113,7 +113,7 @@ async function main() {
   server.listen(PORT, function () {
     const line = '─'.repeat(52);
     console.log('\n' + line);
-    console.log('  MIASTO 88 — serwer działa');
+    console.log('  GOWEBLY RESTAURACJA — serwer działa');
     console.log(line);
     console.log('  Strona:  http://localhost:' + PORT + '/');
     console.log('  Panel:   http://localhost:' + PORT + '/admin');
